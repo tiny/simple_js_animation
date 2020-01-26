@@ -5,37 +5,39 @@ var pack = new Array();
 var Pi = 3.141592654;
 var _pending = null;
 
-function bouncingball(img_map, ncol, nrow, ix, iy, start_cell, end_cell) {
-    this.img_map = 'art/'+img_map;
-    this.cx = Math.floor(ix / ncol);
-    this.cy = Math.floor(iy / nrow);
-    this.ncol = ncol;
-    this.nrow = nrow;
-    this.ix = ix;
-    this.iy = iy;
-    this.ticker = 0;
-    this.cell = start_cell;
-    this.start_cell = start_cell;
-    this.end_cell = (end_cell == 0) ? nrow * ncol - 1 : end_cell;
+class Ball {
+    constructor(img_map, ncol, nrow, ix, iy, start_cell, end_cell) {
+        this.img_map = 'art/' + img_map;
+        this.cx = Math.floor(ix / ncol);
+        this.cy = Math.floor(iy / nrow);
+        this.ncol = ncol;
+        this.nrow = nrow;
+        this.ix = ix;
+        this.iy = iy;
+        this.ticker = 0;
+        this.cell = start_cell;
+        this.start_cell = start_cell;
+        this.end_cell = (end_cell == 0) ? nrow * ncol - 1 : end_cell;
 
-    this.x = 0;
-    this.y = 0;
-    this.dx = 1;
-    this.dy = 1;
-    this.minx = 25;
-    this.miny = 25;
-    this.maxx = this.minx + 900;
-    this.maxy = this.miny + 900;
-    this.ctrx = Math.floor((this.maxx - this.minx) / 2);
-    this.ctry = Math.floor((this.maxy - this.miny) / 2);
-    this.radius = 0;
-    this.max_radius = (this.maxx - this.minx) / 2;
-    this._init = 0;
-    this._isdead = 0;
-    this.lifespan = Math.floor(Math.random() * (2000 - 400) + 400);
-    this.path = Math.floor(Math.random() * 2 + 1);
+        this.x = 0;
+        this.y = 0;
+        this.dx = 1;
+        this.dy = 1;
+        this.minx = 25;
+        this.miny = 25;
+        this.maxx = this.minx + 900;
+        this.maxy = this.miny + 900;
+        this.ctrx = Math.floor((this.maxx - this.minx) / 2);
+        this.ctry = Math.floor((this.maxy - this.miny) / 2);
+        this.radius = 0;
+        this.max_radius = (this.maxx - this.minx) / 2;
+        this._init = 0;
+        this._isdead = 0;
+        this.lifespan = Math.floor(Math.random() * (2000 - 400) + 400);
+        this.path = Math.floor(Math.random() * 2 + 1);
+    }
 
-    this.create = function () {
+    create() {
         var r, g, b, cx;
         r = Math.floor(Math.random() * 255);
         g = Math.floor(Math.random() * 255);
@@ -58,13 +60,13 @@ function bouncingball(img_map, ncol, nrow, ix, iy, start_cell, end_cell) {
             + '</div>';
     }
 
-    this.anchor = function () {
+    anchor() {
         this.x = this.ctrx;
         this.y = this.ctry;
         this.radius = 0;
     }
 
-    this.calc_radius = function () {
+    calc_radius() {
         var dx, dy;
         dx = this.x - this.ctrx;
         dy = this.y - this.ctry;
@@ -72,13 +74,13 @@ function bouncingball(img_map, ncol, nrow, ix, iy, start_cell, end_cell) {
         this.alpha = Math.atan2(dy, dx) * (180 / Pi);
     }
 
-    this.die = function () {
+    die() {
         this._isdead = 1;
         this.obj.style.top = 200;
         this.obj.remove();
     }
 
-    this.doMove = function () {
+    doMove() {
         if (this._init != 1) this.init();
 
         this.update_position();
@@ -97,7 +99,7 @@ function bouncingball(img_map, ncol, nrow, ix, iy, start_cell, end_cell) {
         }
     }
 
-    this.init = function () {
+    init() {
         this.obj = document.getElementById(this.name);
 
         var x = (this.cell % this.ncol) * this.cx;
@@ -106,20 +108,20 @@ function bouncingball(img_map, ncol, nrow, ix, iy, start_cell, end_cell) {
         this._init = 1;
     }
 
-    this.twitch = function () {
+    twitch() {
         this.doMove();
         this.lifespan--;
         if (this.lifespan <= 0) this.die();
     }
 
-    this.update_position = function () {
+    update_position() {
         if (this.path == 1)
             this.simple_bounce();
         else
             this.simple_orbit();
     }
 
-    this.simple_bounce = function () {
+    simple_bounce() {
         this.x += this.dx;
         if (this.x < this.minx) {
             this.dx *= -1;
@@ -141,7 +143,7 @@ function bouncingball(img_map, ncol, nrow, ix, iy, start_cell, end_cell) {
         }
     }
 
-    this.simple_orbit = function () {
+    simple_orbit() {
         this.alpha += this.dx;
         if (this.alpha > 360) this.alpha = 0;
 
@@ -180,23 +182,23 @@ function init() {
     for (var i = 0; i < 100; i++) {
         x = Math.floor(Math.random() * 16 + 1);
         switch (x) {
-            case 1: b = new bouncingball('image11.png', 10, 1, 160, 16, 0, 0); break;
-            case 2: b = new bouncingball('image15.png', 10, 1, 160, 16, 0, 0); break;
-            case 3: b = new bouncingball('rock2.png', 10, 3, 320, 96, 0, 0); break;
-            case 4: b = new bouncingball('image1.png', 10, 13, 160, 208, 0, 9); break;
-            case 5: b = new bouncingball('image1.png', 10, 13, 160, 208, 10, 19); break;
-            case 6: b = new bouncingball('image1.png', 10, 13, 160, 208, 20, 29); break;
-            case 7: b = new bouncingball('image1.png', 10, 13, 160, 208, 30, 39); break;
-            case 8: b = new bouncingball('image1.png', 10, 13, 160, 208, 40, 49); break;
-            case 9: b = new bouncingball('image1.png', 10, 13, 160, 208, 50, 59); break;
-            case 10: b = new bouncingball('image1.png', 10, 13, 160, 208, 60, 69); break;
-            case 11: b = new bouncingball('image1.png', 10, 13, 160, 208, 70, 79); break;
-            case 12: b = new bouncingball('image1.png', 10, 13, 160, 208, 80, 89); break;
-            case 13: b = new bouncingball('image1.png', 10, 13, 160, 208, 90, 99); break;
-            case 14: b = new bouncingball('image1.png', 10, 13, 160, 208, 100, 109); break;
-            case 15: b = new bouncingball('rock3.png', 15, 2, 240, 32, 0, 0); break;
-            case 16: b = new bouncingball('image3.png', 10, 2, 160, 32, 0, 9); break;
-            case 17: b = new bouncingball('image3.png', 10, 2, 160, 32, 10, 19); break;
+            case 1: b = new Ball('image11.png', 10, 1, 160, 16, 0, 0); break;
+            case 2: b = new Ball('image15.png', 10, 1, 160, 16, 0, 0); break;
+            case 3: b = new Ball('rock2.png', 10, 3, 320, 96, 0, 0); break;
+            case 4: b = new Ball('image1.png', 10, 13, 160, 208, 0, 9); break;
+            case 5: b = new Ball('image1.png', 10, 13, 160, 208, 10, 19); break;
+            case 6: b = new Ball('image1.png', 10, 13, 160, 208, 20, 29); break;
+            case 7: b = new Ball('image1.png', 10, 13, 160, 208, 30, 39); break;
+            case 8: b = new Ball('image1.png', 10, 13, 160, 208, 40, 49); break;
+            case 9: b = new Ball('image1.png', 10, 13, 160, 208, 50, 59); break;
+            case 10: b = new Ball('image1.png', 10, 13, 160, 208, 60, 69); break;
+            case 11: b = new Ball('image1.png', 10, 13, 160, 208, 70, 79); break;
+            case 12: b = new Ball('image1.png', 10, 13, 160, 208, 80, 89); break;
+            case 13: b = new Ball('image1.png', 10, 13, 160, 208, 90, 99); break;
+            case 14: b = new Ball('image1.png', 10, 13, 160, 208, 100, 109); break;
+            case 15: b = new Ball('rock3.png', 15, 2, 240, 32, 0, 0); break;
+            case 16: b = new Ball('image3.png', 10, 2, 160, 32, 0, 9); break;
+            case 17: b = new Ball('image3.png', 10, 2, 160, 32, 10, 19); break;
         }
         b.create();
         pack.push(b);
@@ -204,32 +206,4 @@ function init() {
 
     twitch();
 }
-
-function on_click(event) {
-    //<embed id="click" src="boing.wav" autostart="false" width="0" height="0" enablejavascript="true">
-    //  play_sound("click") ;
-    //  if (!e) var e = window.event;
-    //  if (window.event) e = event ;
-    var e = event;
-    if (e.pageX || e.pageY) {
-        posx = e.pageX;
-        posy = e.pageY;
-    }
-    else if (e.clientX || e.clientY) {
-        posx = e.clientX;
-        posy = e.clientY;
-    }
-    _pending = e;
-    //  _pending = new bouncingball() ;
-    //  _pending.create() ;
-    //  pack.push( b ) ;
-}
-
-function play_sound(soundObj) {
-    var sound = document.getElementById(soundObj);
-    if (sound)
-        sound.Play();
-}
-
-window.onload = init;
 
